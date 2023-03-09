@@ -155,6 +155,8 @@ public class BirdsController implements Initializable {
 
     public void first() {
         // Write this method
+        bird = database.root.getData();
+        showBird();
     }
 
     public void last() {
