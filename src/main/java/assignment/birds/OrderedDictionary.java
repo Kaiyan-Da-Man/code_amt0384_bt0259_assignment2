@@ -56,6 +56,39 @@ public class OrderedDictionary implements OrderedDictionaryADT {
     @Override
     public void insert(BirdRecord r) throws DictionaryException {
         // Write this method
+        Node newEntry = new Node(r);
+
+        if(root.getData().getDataKey() == null) {
+            root = newEntry;    // newEntry is root if root is empty
+        } else {
+            Node parent = new Node();
+            Node currentNode = root;
+
+            while(currentNode != null) {
+                parent = currentNode;
+                int result = newEntry.getData().getDataKey().compareTo(currentNode.getData().getDataKey());
+
+                if (result == 0) {
+                    System.out.println("item exists");
+                    return;
+                } else if (result == -1) {
+                    currentNode = currentNode.getLeftChild();
+                } else {
+                    currentNode = currentNode.getRightChild();
+                }
+            }
+
+            newEntry.setParent(parent);
+            if(newEntry.getData().getDataKey().compareTo(parent.getData().getDataKey()) == -1) {
+                parent.setLeftChild(newEntry);
+            } else {
+                parent.setRightChild(newEntry);
+            }
+
+//            System.out.println(newEntry.getData().getDataKey().getBirdName());
+//            System.out.println(newEntry.getParent().getData().getDataKey().getBirdName());
+//            System.out.println("---------------------");
+        }
     }
 
     /**
