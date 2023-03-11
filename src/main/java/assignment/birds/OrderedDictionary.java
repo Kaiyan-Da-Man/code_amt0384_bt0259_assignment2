@@ -146,7 +146,7 @@ public class OrderedDictionary implements OrderedDictionaryADT {
             }
         }
         //No nodes larger than k
-        throw new DictionaryException(String.format("Couldn't find node greater than node with name: %s and size: %s", k.getBirdName(), k.getBirdSize()));
+        throw new DictionaryException("There is no successor for the given record key");
     }
 
    
@@ -193,7 +193,7 @@ public class OrderedDictionary implements OrderedDictionaryADT {
             }
         }
         //No nodes larger than k
-        throw new DictionaryException(String.format("Couldn't find node less than node with name: %s and size: %s", k.getBirdName(), k.getBirdSize()));
+        throw new DictionaryException("There is no predecessor for the given record key");
     }
 
     /**
@@ -204,8 +204,15 @@ public class OrderedDictionary implements OrderedDictionaryADT {
      */
     @Override
     public BirdRecord smallest() throws DictionaryException{
-        // Write this method
-        return null; // change this statement
+        if(root == null)
+        {
+            throw new DictionaryException("Dictionary is empty");
+        }
+        Node currentNode = root;
+        while(currentNode.hasLeftChild()) {
+            currentNode = currentNode.getLeftChild();
+        }
+        return currentNode.getData();
     }
 
     /*
