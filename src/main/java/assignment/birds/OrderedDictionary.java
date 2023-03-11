@@ -114,8 +114,39 @@ public class OrderedDictionary implements OrderedDictionaryADT {
      */
     @Override
     public BirdRecord successor(DataKey k) throws DictionaryException{
-        // Write this method
-        return null; // change this statement
+        Node currentNode = root;
+        Node smallestValidNode = null;
+        while(currentNode != null) {
+            int result = k.compareTo(currentNode.getData().getDataKey());
+            //Node is larger than k and no left child
+            if (result == -1) {
+                //No smaller node exists
+                if(!currentNode.hasLeftChild()) {
+                    return currentNode.getData();
+                }
+                else {
+                    //Store this node in case there are no smaller valid results
+                    smallestValidNode = currentNode;
+                    currentNode = currentNode.getLeftChild();
+                }
+            }
+            else if(result >= 0) {
+                if(currentNode.hasRightChild()) {
+                    currentNode = currentNode.getRightChild();
+                }
+                else {
+                    //Node is less than, but no greater nodes exist
+                    if(smallestValidNode != null) {
+                        return smallestValidNode.getData();
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+        //No nodes larger than k
+        throw new DictionaryException(String.format("Couldn't find node greater than node with name: %s and size: %s", k.getBirdName(), k.getBirdSize()));
     }
 
    
