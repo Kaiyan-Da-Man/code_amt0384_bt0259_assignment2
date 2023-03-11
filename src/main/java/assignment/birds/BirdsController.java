@@ -154,35 +154,41 @@ public class BirdsController implements Initializable {
     }
 
     public void first() {
-        try {
+        try { //Retrieve smallest key from dictionary and display it
             bird = database.smallest();
             showBird();
         } catch(DictionaryException exception) {
+            //Display error if dictionary is empty
             displayAlert(exception.getMessage());
         }
     }
 
     public void last() {
-        // Write this method
+        try { //Retrieve largest key from dictionary and display it
+            bird = database.largest();
+            showBird();
+        } catch(DictionaryException exception) {
+            //Display error if dictionary is empty
+            displayAlert(exception.getMessage());
+        }
     }
 
     public void next() {
-        try {
+        try { //Get successor to current key and display it
             bird = database.successor(bird.getDataKey());
             showBird();
         } catch(DictionaryException exception) {
-            //Display error message
+            //Display error message if no successor exists
             displayAlert(exception.getMessage());
         }
     }
 
     public void previous() {
-        try {
+        try { //Get predecessor to current key and display it.
             bird = database.predecessor(bird.getDataKey());
-            System.out.println(bird.getDataKey().getBirdName()+" "+bird.getDataKey().getBirdSize());
             showBird();
         } catch(DictionaryException exception) {
-            //Display error message
+            //Display error message if no predecessor exists
             displayAlert(exception.getMessage());
         }
     }

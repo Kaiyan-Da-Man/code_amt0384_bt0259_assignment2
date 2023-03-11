@@ -204,10 +204,12 @@ public class OrderedDictionary implements OrderedDictionaryADT {
      */
     @Override
     public BirdRecord smallest() throws DictionaryException{
+        //Check if dictionary is empty
         if(root == null)
         {
             throw new DictionaryException("Dictionary is empty");
         }
+        //Get leftmost node and return its data
         Node currentNode = root;
         while(currentNode.hasLeftChild()) {
             currentNode = currentNode.getLeftChild();
@@ -221,8 +223,17 @@ public class OrderedDictionary implements OrderedDictionaryADT {
      */
     @Override
     public BirdRecord largest() throws DictionaryException{
-        // Write this method
-        return null; // change this statement
+        //Check if dictionary is empty
+        if(root == null)
+        {
+            throw new DictionaryException("Dictionary is empty");
+        }
+        //Get rightmost node and return its data.
+        Node currentNode = root;
+        while(currentNode.hasRightChild()) {
+            currentNode = currentNode.getRightChild();
+        }
+        return currentNode.getData();
     }
       
     /* Returns true if the dictionary is empty, and true otherwise. */
