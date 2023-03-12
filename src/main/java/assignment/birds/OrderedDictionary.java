@@ -1,5 +1,8 @@
 package assignment.birds;
 
+// FIXME: remove printStream
+import java.io.PrintStream;
+
 public class OrderedDictionary implements OrderedDictionaryADT {
 
     Node root;
@@ -43,7 +46,6 @@ public class OrderedDictionary implements OrderedDictionaryADT {
                 current = current.getRightChild();
             }
         }
-
     }
 
     /**
@@ -91,6 +93,35 @@ public class OrderedDictionary implements OrderedDictionaryADT {
         }
     }
 
+
+    /**
+     * Helper function to find node with DataKey k.
+     *
+     * @param k
+     * @return node with k
+     * @throws assignment/birds/DictionaryException.java
+     */
+    public Node findNode(DataKey k) throws DictionaryException {
+        Node current = root;
+        int comparison;
+        if (root.isEmpty()) {
+            throw new DictionaryException("There is no record matches the given key");
+        }
+
+        while (true) {
+            comparison = current.getData().getDataKey().compareTo(k);
+            if (comparison == 0) { // key found
+                return current;
+            }
+            if (comparison == 1) {
+                current = current.getLeftChild();
+            } else if (comparison == -1) {
+                current = current.getRightChild();
+            }
+        }
+
+    }
+
     /**
      * Removes the record with Key k from the dictionary. It throws a
      * DictionaryException if the record is not in the dictionary.
@@ -100,7 +131,73 @@ public class OrderedDictionary implements OrderedDictionaryADT {
      */
     @Override
     public void remove(DataKey k) throws DictionaryException {
-        // Write this method
+        Node parent = null;
+        Node current = root;
+        int comparison;
+
+        // tree is empty
+        if(root == null) {
+            throw new DictionaryException("Dictionary is empty");
+        }
+
+        // find Node and set parent node
+        while (current != null && current.getData().getDataKey().compareTo(k) != 0) {
+            parent = current;
+            comparison = current.getData().getDataKey().compareTo(k);
+
+            if (comparison == 1) {
+                current = current.getLeftChild();
+            } else if (comparison == -1) {
+                current = current.getRightChild();
+            }
+        }
+
+        // deleted node is leaf node
+        if(current.isLeaf()) {
+            // if deleted node is not root, set parent's child to null, whichever child current is.
+            if(current != root) {
+                if (parent.getLeftChild() == current) {
+                    parent.setLeftChild(null);
+                } else {
+                    parent.setRightChild(null);
+                }
+            } else {
+                root = null;
+            }
+
+        } else if(current.hasLeftChild() && current.hasRightChild()) {  // if deleted node has children
+            Node successor = findNode(successor(k).getDataKey());   // find successor node
+            BirdRecord temp = successor.getData();  // save successor node information
+            remove(successor.getData().getDataKey());   // delete successor node
+            current.setData(temp);  // set current node to successor, deleting the initial record
+
+        } else { // if deleted node only has one child
+            Node child = null;
+
+            // set a child
+            if (current.hasLeftChild()) {
+                child = current.getLeftChild();
+            } else {
+                child = current.getRightChild();
+            }
+
+            // if the deleted node is not the root node, set the parent's child node
+            // to the current's child node
+            if (current != root) {
+                if (current == parent.getLeftChild()) {
+                    parent.setLeftChild(child);
+                } else {
+                    parent.setRightChild(child);
+                }
+            } else {    // if the root is being deleted, set the new root as the child
+                root = child;
+            }
+        }
+
+        // FIXME: remove test sout and print
+        System.out.println("------------");
+        print(System.out);
+
     }
 
     /**
@@ -240,5 +337,62 @@ public class OrderedDictionary implements OrderedDictionaryADT {
     @Override
     public boolean isEmpty (){
         return root.isEmpty();
+    }
+
+    /*
+    * functions from https://www.baeldung.com/java-print-binary-tree-diagram to help visualize tree
+    * traversePreOrder(Node root)
+    * traverseNodes(StringBuilder sb, String padding, String pointer, Node node, boolean hasRightSibling)
+    * print(PrintStream os)
+    *
+    * */
+    // FIXME: remove traversePreOrder
+    public String traversePreOrder(Node root) {
+
+        if (root == null) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(root.getData().getDataKey().getBirdName());
+
+        String pointerRight = "└──";
+        String pointerLeft = (root.getRightChild() != null) ? "├──" : "└──";
+
+        traverseNodes(sb, "", pointerLeft, root.getLeftChild(), root.getRightChild() != null);
+        traverseNodes(sb, "", pointerRight, root.getRightChild(), false);
+
+        return sb.toString();
+    }
+
+    // FIXME: remove traverseNodes
+    public void traverseNodes(StringBuilder sb, String padding, String pointer, Node node,
+                              boolean hasRightSibling) {
+        if (node != null) {
+            sb.append("\n");
+            sb.append(padding);
+            sb.append(pointer);
+            sb.append(node.getData().getDataKey().getBirdName());
+
+            StringBuilder paddingBuilder = new StringBuilder(padding);
+            if (hasRightSibling) {
+                paddingBuilder.append("│  ");
+            } else {
+                paddingBuilder.append("   ");
+            }
+
+            String paddingForBoth = paddingBuilder.toString();
+            String pointerRight = "└──";
+            String pointerLeft = (node.getRightChild() != null) ? "├──" : "└──";
+
+            traverseNodes(sb, paddingForBoth, pointerLeft, node.getLeftChild(), node.getRightChild() != null);
+            traverseNodes(sb, paddingForBoth, pointerRight, node.getRightChild(), false);
+        }
+    }
+
+    // FIXME: remove print
+    public void print(PrintStream os) {
+        os.print(traversePreOrder(root));
+        System.out.println();
     }
 }

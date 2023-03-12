@@ -243,6 +243,9 @@ public class BirdsController implements Initializable {
         }
         this.BirdPortal.setVisible(true);
         this.first();
+
+        // FIXME: remove print
+        database.print(System.out);
     }
 
     @Override
